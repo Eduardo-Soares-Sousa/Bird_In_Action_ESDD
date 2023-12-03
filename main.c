@@ -20,8 +20,8 @@ bool desempilhar(Pilha *pilha);
 bool esta_cheia(Pilha *pilha);
 bool esta_vazia(Pilha *pilha);
 
-#define DISP_W 480 //definição de largura da tela do jogo
-#define DISP_H 720 //definição de altura da tela do jogo
+#define DISP_W 480
+#define DISP_H 720
 #define MAX_CANOS 5
 
 typedef struct {
@@ -49,24 +49,22 @@ int main(int argc, char const *argv[]){
     inciar_Allegro();
     Pilha *alturas_subidas = iniciar_pilha();
 
-    ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60); // 60 FPS
+    ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60);
     if(!timer) {
         printf("Falha ao criar temporizador\n");
     return -1;
     }
 
     fila = al_create_event_queue();
-    al_register_event_source(fila, al_get_mouse_event_source()); // Registre eventos do mouse
+    al_register_event_source(fila, al_get_mouse_event_source());
     al_register_event_source(fila, al_get_timer_event_source(timer));
     al_start_timer(timer);
 
     ALLEGRO_BITMAP *start_game = al_load_bitmap("images/button_play.png");
 
-    // Crie uma janela
     display = al_create_display(DISP_W, DISP_H);
     al_register_event_source(fila, al_get_display_event_source(display));
 
-    // Carregue a imagem de plano de fundo
     background = al_load_bitmap("images/background.bmp");
     ground = al_load_bitmap("images/ground.png");
     bird = al_load_bitmap("images/bird.png");
@@ -86,20 +84,20 @@ int main(int argc, char const *argv[]){
     int pos_birdX = DISP_W/2; 
     int pos_birdY = DISP_H/2;
 
-    double gravidade = 0.2; // Ajuste a intensidade da gravidade conforme necessário
+    double gravidade = 0.2;
     double velocidade_vertical_passaro = 0.0;
 
-    double largura_passaro = 100; // Nova largura do sprite do pássaro
-    double altura_passaro = 100;  // Nova altura do sprite do pássaro
+    double largura_passaro = 100;
+    double altura_passaro = 100;
 
-    double largura_botao = 120; // Nova largura do botão
-    double altura_botao = 80;  // Nova altura do botão
+    double largura_botao = 120;
+    double altura_botao = 80;
 
     double largura_game_over = 250;
     double altura_game_over = 150;
 
-    double posicao_botao_x = DISP_W / 2 - largura_botao / 2; // Posição x do botão
-    double posicao_botao_y = DISP_H / 2 - altura_botao / 2 - 100; // Posição y do botão
+    double posicao_botao_x = DISP_W / 2 - largura_botao / 2;
+    double posicao_botao_y = DISP_H / 2 - altura_botao / 2 - 100;
 
     // Altura do chão
     int altura_chao = DISP_H - 128;
@@ -110,8 +108,8 @@ int main(int argc, char const *argv[]){
 
     float largura_cano = al_get_bitmap_width(cano_superior);
     float altura_cano = al_get_bitmap_height(cano_superior);
-    float espacamento_entre_cano = 250; // Espaço entre os canos
-    float velocidade_cano = 2; // Velocidade dos canos
+    float espacamento_entre_cano = 250;
+    float velocidade_cano = 2;
 
     for (int i = 0; i < MAX_CANOS; i++) {
         gerarCano(&canos[i]);
@@ -120,7 +118,6 @@ int main(int argc, char const *argv[]){
     int pontuacao = 0;
     bool passou = false;
 
-    // Loop principal
     bool jogo = true;
     while(jogo){
 
@@ -131,28 +128,24 @@ int main(int argc, char const *argv[]){
             jogo = false;
         }else if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN){
             if(!jogo_comecou && !gameover){
-                // Verifique se o mouse foi clicado dentro da área do botão de iniciar
                 if (event.mouse.x >= posicao_botao_x && event.mouse.x <= posicao_botao_x + largura_botao &&
                     event.mouse.y >= posicao_botao_y && event.mouse.y <= posicao_botao_y + altura_botao) {
                     jogo_comecou = true;
                 }
             }else if(gameover){
-                // Reinicie o jogo
                 gameover = false;
                 pos_birdX = DISP_W / 2;
                 pos_birdY = DISP_H / 2;
                 velocidade_vertical_passaro = 0.0;
                 jogo_comecou = true;
 
-                // Reinicie a posição dos canos
                 for(int i = 0; i < MAX_CANOS; i++){
                     canos[i].posicao_x = DISP_W + i * (espacamento_entre_cano + largura_cano);
                     canos[i].posicao_topo_y = rand() % (DISP_H - 300) + 100;
                     canos[i].posicao_inferior_y = canos[i].posicao_topo_y + espacamento_entre_cano;
                 }
             }else if(jogo_comecou){
-                // O jogador clicou no mouse, faça o pássaro subir
-                velocidade_vertical_passaro = -4.0; // Valor negativo para subir
+                velocidade_vertical_passaro = -4.0;
                 empilhar(pos_birdY, alturas_subidas);
             }
         }else if(event.type == ALLEGRO_EVENT_TIMER){
@@ -162,38 +155,28 @@ int main(int argc, char const *argv[]){
         if(atualizar && al_is_event_queue_empty(fila)){
             atualizar = false;
 
-            al_clear_to_color(al_map_rgb(0, 0, 0)); // Limpe a tela com uma cor de fundo
-
-            // Desenhe a imagem de plano de fundo
+            al_clear_to_color(al_map_rgb(0, 0, 0));
             al_draw_bitmap(background, 0, 0, 0);
 
             if(jogo_comecou && !gameover){
-                // Atualize a posição vertical do pássaro
                 pos_birdY += velocidade_vertical_passaro;
-
-                // Aplique a gravidade (aumente a velocidade vertical do pássaro)
                 velocidade_vertical_passaro += gravidade;
 
-                // Verifique se o pássaro passou com segurança entre os canos
                 if(pos_birdX > canos[0].posicao_x + al_get_bitmap_width(cano_superior) / 2 && pos_birdX < canos[0].posicao_x + al_get_bitmap_width(cano_superior)){
-                // Aumente a pontuação do jogador apenas se ainda não tiver passado pelos canos nesta iteração
                     if(!passou){
                         pontuacao++;
                         printf("Pontuação: %d\n", pontuacao);
-                        passou = true; // Marque que o pássaro já passou pelos canos nesta iteração
+                        passou = true;
                     }
                 } else {
-                    passou = false; // Redefina a marcação se o pássaro não estiver mais entre os canos
+                    passou = false;
                 }
 
-                // Desenhe a pontuação na tela
                 ALLEGRO_FONT *fonte = al_create_builtin_font();
                 al_draw_textf(fonte, al_map_rgb(255, 255, 255), 10, 10, 0, "Pontuacao: %d", pontuacao);
                 al_destroy_font(fonte);
 
-                // Verifique se o pássaro está caindo (velocidade vertical positiva)
                 if (velocidade_vertical_passaro > 0) {
-                    // Verifique se a pilha não está vazia antes de desempilhar a altura anterior da subida
                     if (!esta_vazia(alturas_subidas)) {
                         desempilhar(alturas_subidas);
                     }
@@ -202,13 +185,11 @@ int main(int argc, char const *argv[]){
                 for(int i = 0; i < MAX_CANOS; i++){
                     canos[i].posicao_x -= velocidade_cano;
 
-                    // Quando um cano sai da tela à esquerda, reposicione-o à direita
                     if(canos[i].posicao_x + largura_cano < 0){
                         gerarCano(&canos[i]);
                     }
 
 
-                    // Verifique a colisão com o pássaro
                     if((pos_birdX + largura_passaro / 2 > canos[i].posicao_x) && (pos_birdX - largura_passaro / 2 < canos[i].posicao_x + largura_cano) && ((pos_birdY - altura_passaro / 2 < canos[i].posicao_topo_y) || (pos_birdY + altura_passaro / 2 > canos[i].posicao_inferior_y))) {
                         gameover = true;
                     }
@@ -217,9 +198,8 @@ int main(int argc, char const *argv[]){
                     al_draw_bitmap(cano_inferior, canos[i].posicao_x, canos[i].posicao_inferior_y, 0);
                 }
 
-                // Verifique a colisão com o chão
                 if(pos_birdY + altura_passaro / 2 - 50 > altura_chao){
-                    gameover = true; // Indica que o jogo acabou
+                    gameover = true;
                 }
 
 
@@ -238,12 +218,11 @@ int main(int argc, char const *argv[]){
                 al_draw_scaled_bitmap(start_game, 0, 0, al_get_bitmap_width(start_game), al_get_bitmap_height(start_game), posicao_botao_x, posicao_botao_y, largura_botao, altura_botao, 0);
             }
 
-            // Desenhe várias instâncias da imagem de chão para criar a repetição
             for(float x = ground_posicao_x; x < al_get_display_width(display); x += largura_ground){
-                al_draw_bitmap(ground, x, altura_chao, 0); // Desenhe o chão repetido horizontalmente
+                al_draw_bitmap(ground, x, altura_chao, 0);
             }
 
-            al_flip_display(); // Atualize a tela
+            al_flip_display();
         }
     }
 
