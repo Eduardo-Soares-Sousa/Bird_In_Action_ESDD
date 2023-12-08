@@ -29,4 +29,5 @@ Isso foi utilizado para a conclusão do fluxograma a seguir:
 
 ![image](https://github.com/Eduardo-Soares-Sousa/Bird_In_Action_ESDD/assets/141190077/833860ff-4d45-4f01-a552-8637cbb309b5)
 
-Link do vídeo: https://youtu.be/eal-IZ2PRBg
+Link do vídeo: Explicação do jogo - Bird in Action: https://youtu.be/eal-IZ2PRBg
+Link do vídeo: Funcionamento do Bird in Action: https://youtu.be/SnjnEJGt3n0
